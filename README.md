@@ -1,2 +1,3 @@
 # e_commerse_automation
-infosys internship
+Milestone 1: Data Preparation and User-Item Interaction Matrix
+
