@@ -1,0 +1,10 @@
+﻿event_time,event_type,product_id,brand,price,user_id,user_session,target,cat_0,cat_1,cat_2,cat_3,timestamp,ts_hour,ts_minute,ts_weekday,ts_day,ts_month,ts_year
+2020-04-01 00:00:19 UTC,cart,5100328,xiaomi,117.12,635164513,c40d1b96-90aa-4cee-b9aa-9475d9c4f17f,0,electronics,clocks,NA,NA,2020-04-01 00:00:19+00:00,0,0,2,1,4,2020
+2020-04-01 00:00:25 UTC,cart,5100328,xiaomi,117.12,635164513,c40d1b96-90aa-4cee-b9aa-9475d9c4f17f,0,electronics,clocks,NA,NA,2020-04-01 00:00:25+00:00,0,0,2,1,4,2020
+2020-04-01 00:00:30 UTC,cart,5100328,xiaomi,117.12,635164513,c40d1b96-90aa-4cee-b9aa-9475d9c4f17f,0,electronics,clocks,NA,NA,2020-04-01 00:00:30+00:00,0,0,2,1,4,2020
+2020-04-01 00:00:35 UTC,cart,5100328,xiaomi,117.12,635164513,c40d1b96-90aa-4cee-b9aa-9475d9c4f17f,0,electronics,clocks,NA,NA,2020-04-01 00:00:35+00:00,0,0,2,1,4,2020
+2020-04-01 00:00:40 UTC,cart,5100328,xiaomi,117.12,635164513,c40d1b96-90aa-4cee-b9aa-9475d9c4f17f,0,electronics,clocks,NA,NA,2020-04-01 00:00:40+00:00,0,0,2,1,4,2020
+2020-04-01 00:00:42 UTC,cart,100011103,acer,385.57,522177285,902aa3e5-957a-49e4-8638-ddbbe895808a,0,electronics,audio,headphone,NA,2020-04-01 00:00:42+00:00,0,0,2,1,4,2020
+2020-04-01 00:00:45 UTC,cart,5100328,xiaomi,117.12,635164513,c40d1b96-90aa-4cee-b9aa-9475d9c4f17f,0,electronics,clocks,NA,NA,2020-04-01 00:00:45+00:00,0,0,2,1,4,2020
+2020-04-01 00:00:51 UTC,cart,7600480,tp-link,52.77,512411694,7685a5aa-42ce-4bd3-b3f4-7d6e1b014ea5,0,furniture,kitchen,table,NA,2020-04-01 00:00:51+00:00,0,0,2,1,4,2020
+2020-04-01 00:01:04 UTC,cart,4100369,sony,540.3,635165471,c6ce1b9b-19d1-429b-a7f4-3f72395c95b4,0,apparel,shoes,NA,NA,2020-04-01 00:01:04+00:00,0,1,2,1,4,2020
