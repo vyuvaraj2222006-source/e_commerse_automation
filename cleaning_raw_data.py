@@ -56,3 +56,4 @@ interaction_df.to_parquet("user_item_interactions.parquet")
 print("Milestone 1 completed successfully.")
 print("User_Item matrix stored in sparse (COO) format.")
 
+
