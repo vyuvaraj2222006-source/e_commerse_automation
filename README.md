@@ -11,9 +11,9 @@ Prepare clean, structured datasets for model development.
 - Built a scalable user–item interaction matrix (sparse format)
 
 ## Files
-- app.py – Data preparation code
+- cleaning_raw_data.py – Data preparation code
 - user_item_interactions.parquet – User–item interaction data
 
 ## How to Run
 ```bash
-python app.py
+python cleaning_raw_data.py
