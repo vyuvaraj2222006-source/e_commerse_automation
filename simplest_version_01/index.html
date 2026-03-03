@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Recommendation System</title>
+    <style>
+        body { font-family: Arial; margin: 30px; }
+        input, button { padding: 8px; margin: 5px; }
+        .product { border: 1px solid #ccc; padding: 10px; margin: 8px 0; }
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+
+<h1>🛒 E-Commerce Recommendation System</h1>
+
+<!-- ================= LOGIN / REGISTER ================= -->
+
+<h2>User Login</h2>
+<input id="loginUser" placeholder="Username">
+<input id="loginPass" placeholder="Password" type="password">
+<button onclick="login()">Login</button>
+
+<h2>New User Register</h2>
+<input id="regUser" placeholder="Username">
+<input id="regEmail" placeholder="Email">
+<input id="regPass" placeholder="Password" type="password">
+<button onclick="register()">Register</button>
+
+<p id="status"></p>
+
+<hr>
+
+<!-- ================= ACTION BUTTONS ================= -->
+
+<div id="actions" class="hidden">
+    <h2>Actions</h2>
+    <button onclick="loadPopular()">🔥 Popular Products</button>
+    <button onclick="loadRecommendations()">🎯 My Recommendations</button>
+</div>
+
+<hr>
+
+<!-- ================= RESULTS ================= -->
+
+<div id="results"></div>
+
+<script>
+const API = "http://127.0.0.1:5000"; // change if deployed
+let token = localStorage.getItem("token");
+
+if (token) {
+    document.getElementById("actions").classList.remove("hidden");
+}
+
+// ---------- REGISTER ----------
+function register() {
+    fetch(`${API}/api/register`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            username: regUser.value,
+            email: regEmail.value,
+            password: regPass.value
+        })
+    })
+    .then(res => res.json())
+    .then(data => {
+        token = data.token;
+        localStorage.setItem("token", token);
+        status.innerText = "✅ Registered & logged in";
+        actions.classList.remove("hidden");
+    });
+}
+
+// ---------- LOGIN ----------
+function login() {
+    fetch(`${API}/api/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            username: loginUser.value,
+            password: loginPass.value
+        })
+    })
+    .then(res => res.json())
+    .then(data => {
+        token = data.token;
+        localStorage.setItem("token", token);
+        status.innerText = "✅ Login successful";
+        actions.classList.remove("hidden");
+    });
+}
+
+// ---------- POPULAR PRODUCTS ----------
+function loadPopular() {
+    fetch(`${API}/api/popular`)
+    .then(res => res.json())
+    .then(data => showProducts(data.popular_products || data.popular_items));
+}
+
+// ---------- RECOMMENDATIONS ----------
+function loadRecommendations() {
+    fetch(`${API}/api/recommendations`, {
+        headers: {
+            "Authorization": "Bearer " + token
+        }
+    })
+    .then(res => res.json())
+    .then(data => showProducts(data.recommendations));
+}
+
+// ---------- DISPLAY ----------
+function showProducts(products) {
+    results.innerHTML = "<h2>Products</h2>";
+
+    products.forEach(p => {
+        const imageUrl = `https://via.placeholder.com/150?text=Product+${p.item_id}`;
+
+        results.innerHTML += `
+            <div class="product">
+                <img src="${imageUrl}" alt="${p.name}">
+                <div>
+                    <b>${p.name}</b><br>
+                    Category: ${p.category}<br>
+                    Price: ₹${p.price}<br>
+                    Score: ${p.popularity_score || p.predicted_score}
+                </div>
+            </div>
+        `;
+    });
+}
+
+</script>
+
+</body>
+</html>
