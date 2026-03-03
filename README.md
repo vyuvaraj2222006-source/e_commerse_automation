@@ -169,3 +169,153 @@ Actual vs Predicted scatter plots
 ✅ Initial performance benchmarks established
 ✅ Memory-efficient implementation
 ✅ Recommendation generation working
+
+📌 Milestone 3 & 4 – Evaluation, Refinement and Deployment
+📍 MILESTONE 3: Evaluation and Refinement
+🎯 Objective
+
+To evaluate the trained recommendation model using standard performance metrics and refine it to improve accuracy and relevance of recommendations.
+
+📊 Overview
+
+In this milestone, the model developed in Milestone 2 was evaluated using real user–item interaction data. Based on performance metrics, the model was fine-tuned to improve recommendation quality.
+
+🛠 Tasks Completed
+1️⃣ Model and Data Loading
+
+Loaded trained model: recommendation_model.pkl
+
+Loaded item metadata: item_metadata.pkl
+
+Loaded configuration file: model_config.json
+
+Loaded user–item interaction data
+
+2️⃣ Ground Truth Preparation
+
+Defined relevance threshold (interaction score ≥ 3)
+
+Created user–relevant item mapping
+
+Filtered evaluation dataset
+
+3️⃣ Evaluation Metrics Used
+
+The following metrics were used:
+
+Precision@K
+
+Recall@K
+
+F1-Score
+
+📌 Metric Definitions
+
+Precision@K → Fraction of recommended items that are relevant
+
+Recall@K → Fraction of relevant items that were recommended
+
+F1-Score → Harmonic mean of Precision and Recall
+
+4️⃣ Model Refinement
+
+Tuned hyperparameters
+
+Adjusted recommendation ranking logic
+
+Tested different K values
+
+Improved filtering strategies
+
+📈 Results
+
+Improved recommendation relevance
+
+Increased Precision and Recall
+
+Balanced F1-Score
+
+Model validated for real-world deployment
+
+✅ Milestone 3 Outcome
+
+✔ Model performance successfully evaluated
+✔ Accuracy improved through refinement
+✔ Ready for deployment
+
+📍 MILESTONE 4: Deployment
+🎯 Objective
+
+Deploy the refined recommendation model into a working web-based application for real-time product recommendations.
+
+🏗 System Architecture
+
+User → Web Interface → Backend API → Recommendation Model → Product Database
+
+🛠 Technologies Used
+
+Python
+
+Flask / FastAPI
+
+HTML, CSS
+
+Pickle
+
+JSON
+
+📁 Project Structure
+project/
+│
+├── app.py
+├── requirements.txt
+├── models/
+│   ├── recommendation_model.pkl
+│   ├── item_metadata.pkl
+│   └── model_config.json
+│
+├── templates/
+├── static/
+└── README.md
+⚙ Backend Implementation
+Model Loading
+import pickle
+import json
+
+model = pickle.load(open("models/recommendation_model.pkl", "rb"))
+metadata = pickle.load(open("models/item_metadata.pkl", "rb"))
+config = json.load(open("models/model_config.json"))
+API Endpoint Example
+@app.route("/recommend/<user_id>")
+def recommend(user_id):
+    recommendations = model.predict(user_id)
+    return jsonify(recommendations)
+🌐 Running the Application
+Step 1: Install Dependencies
+pip install -r requirements.txt
+Step 2: Run Application
+python app.py
+Step 3: Open in Browser
+http://localhost:5000
+🧪 Deployment Testing
+
+API endpoints tested
+
+Model loading verified
+
+Real-time recommendation generation validated
+
+Frontend–backend integration successful
+
+✅ Milestone 4 Outcome
+
+✔ Successfully deployed ML model
+✔ Real-time personalized recommendations
+✔ Integrated AI model with web application
+✔ End-to-end AI-powered e-commerce system completed
+
+🏁 Final Project Status
+Milestone	Status
+Milestone 1 – Data Preparation	✅ Completed
+Milestone 2 – Model Building	✅ Completed
+Milestone 3 – Evaluation & Refinement	✅ Completed.
