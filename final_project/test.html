@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Test Page</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .test-section {
+            background: white;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #5568d3;
+        }
+        pre {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+        .success { color: green; }
+        .error { color: red; }
+    </style>
+</head>
+<body>
+    <h1>🧪 API Test Page</h1>
+    
+    <div class="test-section">
+        <h2>API Configuration</h2>
+        <input type="text" id="apiUrl" value="http://localhost:5000" style="width: 100%; padding: 10px;">
+    </div>
+    
+    <div class="test-section">
+        <h2>1. Test Health Check</h2>
+        <button onclick="testHealth()">Test /health</button>
+        <pre id="healthResult">Click button to test...</pre>
+    </div>
+    
+    <div class="test-section">
+        <h2>2. Test Popular Products</h2>
+        <button onclick="testPopular()">Test /api/popular</button>
+        <pre id="popularResult">Click button to test...</pre>
+    </div>
+    
+    <div class="test-section">
+        <h2>3. Test All Products</h2>
+        <button onclick="testProducts()">Test /api/items</button>
+        <pre id="productsResult">Click button to test...</pre>
+    </div>
+    
+    <div class="test-section">
+        <h2>4. Test Login</h2>
+        <button onclick="testLogin()">Login as 'demo'</button>
+        <pre id="loginResult">Click button to test...</pre>
+    </div>
+    
+    <div class="test-section">
+        <h2>5. Test Recommendations (requires login)</h2>
+        <button onclick="testRecommendations()">Test /api/recommendations</button>
+        <pre id="recsResult">Login first, then click...</pre>
+    </div>
+    
+    <script>
+        let authToken = null;
+        
+        function getApiUrl() {
+            return document.getElementById('apiUrl').value;
+        }
+        
+        async function testHealth() {
+            const result = document.getElementById('healthResult');
+            result.textContent = 'Testing...';
+            
+            try {
+                const response = await fetch(`${getApiUrl()}/health`);
+                const data = await response.json();
+                result.innerHTML = `<span class="success">✅ Success!</span>\n${JSON.stringify(data, null, 2)}`;
+            } catch (error) {
+                result.innerHTML = `<span class="error">❌ Error:</span> ${error.message}`;
+            }
+        }
+        
+        async function testPopular() {
+            const result = document.getElementById('popularResult');
+            result.textContent = 'Testing...';
+            
+            try {
+                const response = await fetch(`${getApiUrl()}/api/popular?n=5`);
+                const data = await response.json();
+                
+                if (data.popular_products) {
+                    result.innerHTML = `<span class="success">✅ Found ${data.popular_products.length} popular products!</span>\n\n`;
+                    data.popular_products.forEach((p, i) => {
+                        result.innerHTML += `${i+1}. ${p.name} - $${p.price.toFixed(2)} (${p.category})\n   Popularity: ${p.popularity_score.toFixed(0)}\n   Image: ${p.image_url || 'No image'}\n`;
+                    });
+                } else {
+                    result.innerHTML = `<span class="error">❌ No popular_products in response</span>\n${JSON.stringify(data, null, 2)}`;
+                }
+            } catch (error) {
+                result.innerHTML = `<span class="error">❌ Error:</span> ${error.message}`;
+            }
+        }
+        
+        async function testProducts() {
+            const result = document.getElementById('productsResult');
+            result.textContent = 'Testing...';
+            
+            try {
+                const response = await fetch(`${getApiUrl()}/api/items?page=1&per_page=5`);
+                const data = await response.json();
+                
+                if (data.items) {
+                    result.innerHTML = `<span class="success">✅ Found ${data.total} total products (showing ${data.items.length})</span>\n\n`;
+                    data.items.forEach((p, i) => {
+                        result.innerHTML += `${i+1}. ${p.name} - $${p.price.toFixed(2)} (${p.category})\n`;
+                    });
+                    result.innerHTML += `\nCategories: ${data.categories.join(', ')}`;
+                } else {
+                    result.innerHTML = `<span class="error">❌ No items in response</span>\n${JSON.stringify(data, null, 2)}`;
+                }
+            } catch (error) {
+                result.innerHTML = `<span class="error">❌ Error:</span> ${error.message}`;
+            }
+        }
+        
+        async function testLogin() {
+            const result = document.getElementById('loginResult');
+            result.textContent = 'Testing login...';
+            
+            try {
+                const response = await fetch(`${getApiUrl()}/api/login`, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({username: 'demo', password: 'demo123'})
+                });
+                
+                const data = await response.json();
+                
+                if (data.token) {
+                    authToken = data.token;
+                    result.innerHTML = `<span class="success">✅ Login successful!</span>\n`;
+                    result.innerHTML += `User: ${data.user.username}\n`;
+                    result.innerHTML += `Email: ${data.user.email}\n`;
+                    result.innerHTML += `Token: ${data.token.substring(0, 20)}...\n`;
+                } else {
+                    result.innerHTML = `<span class="error">❌ Login failed</span>\n${JSON.stringify(data, null, 2)}`;
+                }
+            } catch (error) {
+                result.innerHTML = `<span class="error">❌ Error:</span> ${error.message}`;
+            }
+        }
+        
+        async function testRecommendations() {
+            const result = document.getElementById('recsResult');
+            
+            if (!authToken) {
+                result.innerHTML = '<span class="error">❌ Please login first!</span>';
+                return;
+            }
+            
+            result.textContent = 'Testing recommendations...';
+            
+            try {
+                const response = await fetch(`${getApiUrl()}/api/recommendations?n=5`, {
+                    headers: {'Authorization': `Bearer ${authToken}`}
+                });
+                
+                const data = await response.json();
+                
+                if (data.recommendations) {
+                    result.innerHTML = `<span class="success">✅ Got ${data.recommendations.length} recommendations for ${data.username}!</span>\n\n`;
+                    result.innerHTML += `Algorithm: ${data.algorithm}\n`;
+                    result.innerHTML += `Matrix User ID: ${data.matrix_user_id}\n\n`;
+                    data.recommendations.forEach((p, i) => {
+                        result.innerHTML += `${i+1}. ${p.name} - $${p.price.toFixed(2)}\n`;
+                        result.innerHTML += `   Category: ${p.category}\n`;
+                        result.innerHTML += `   Match Score: ${p.predicted_score.toFixed(3)}\n`;
+                        result.innerHTML += `   Image: ${p.image_url || 'No image'}\n\n`;
+                    });
+                } else {
+                    result.innerHTML = `<span class="error">❌ No recommendations in response</span>\n${JSON.stringify(data, null, 2)}`;
+                }
+            } catch (error) {
+                result.innerHTML = `<span class="error">❌ Error:</span> ${error.message}`;
+            }
+        }
+        
+        // Auto-test on load
+        window.onload = () => {
+            testHealth();
+        };
+    </script>
+</body>
+</html>

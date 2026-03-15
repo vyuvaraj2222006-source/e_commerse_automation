@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-Commerce Store - AI Recommendations</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            padding: 40px;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        h1 {
+            color: #667eea;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            color: #666;
+            font-size: 1.1em;
+        }
+        
+        /* Auth Section */
+        .auth-section {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+        
+        .auth-forms {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+        }
+        
+        .auth-form {
+            flex: 1;
+            max-width: 400px;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: #333;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 10px 15px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 1em;
+        }
+        
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .btn {
+            padding: 10px 25px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            font-size: 1em;
+        }
+        
+        .btn-primary {
+            background: #667eea;
+            color: white;
+            width: 100%;
+        }
+        
+        .btn-primary:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn-secondary {
+            background: #e9ecef;
+            color: #333;
+        }
+        
+        .btn-secondary:hover {
+            background: #dee2e6;
+        }
+        
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            background: #c82333;
+        }
+        
+        .user-info {
+            background: #d4edda;
+            border: 2px solid #c3e6cb;
+            border-radius: 10px;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .user-details {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .user-avatar {
+            width: 50px;
+            height: 50px;
+            background: #667eea;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5em;
+            font-weight: bold;
+        }
+        
+        .section {
+            margin-bottom: 40px;
+        }
+        
+        .section h2 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+            border-left: 4px solid #667eea;
+            padding-left: 15px;
+        }
+        
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 25px;
+        }
+        
+        .product-card {
+            background: white;
+            border: 2px solid #e9ecef;
+            border-radius: 15px;
+            padding: 0;
+            transition: all 0.3s;
+            cursor: pointer;
+            overflow: hidden;
+        }
+        
+        .product-card:hover {
+            border-color: #667eea;
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+        
+        .product-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            background: #f8f9fa;
+        }
+        
+        .product-content {
+            padding: 20px;
+        }
+        
+        .product-card h3 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 1.2em;
+        }
+        
+        .product-category {
+            display: inline-block;
+            background: #e7f3ff;
+            color: #0066cc;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            margin-bottom: 10px;
+        }
+        
+        .product-price {
+            font-size: 1.5em;
+            color: #667eea;
+            font-weight: bold;
+            margin: 15px 0;
+        }
+        
+        .product-score {
+            font-size: 0.9em;
+            color: #666;
+            margin-top: 5px;
+        }
+        
+        .product-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .product-actions .btn {
+            flex: 1;
+            padding: 10px;
+        }
+        
+        .status {
+            padding: 10px 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+        
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+            font-size: 1.2em;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #666;
+        }
+        
+        .hidden {
+            display: none !important;
+        }
+        
+        .api-config {
+            background: #fff3cd;
+            border: 2px solid #ffc107;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .api-config input {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 1em;
+            margin-top: 10px;
+        }
+        
+        .filter-section {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .filter-section select {
+            padding: 10px 15px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 1em;
+            cursor: pointer;
+        }
+        
+        .pagination {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        
+        .pagination button {
+            padding: 10px 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🛍️ Smart E-Commerce Store</h1>
+            <p class="subtitle">AI-Powered Product Recommendations with NMF</p>
+        </header>
+        
+        <div class="api-config">
+            <label for="apiUrl"><strong>API URL:</strong></label>
+            <input type="text" id="apiUrl" placeholder="https://your-api.railway.app" value="http://localhost:5000">
+        </div>
+        
+        <div id="statusMessage"></div>
+        
+        <!-- Auth Section -->
+        <div id="authSection" class="auth-section">
+            <div class="auth-forms">
+                <!-- Login Form -->
+                <div class="auth-form">
+                    <h3>Login</h3>
+                    <div class="form-group">
+                        <label>Username</label>
+                        <input type="text" id="loginUsername" placeholder="demo">
+                    </div>
+                    <div class="form-group">
+                        <label>Password</label>
+                        <input type="password" id="loginPassword" placeholder="demo123">
+                    </div>
+                    <button class="btn btn-primary" onclick="login()">Login</button>
+                    <p style="margin-top: 10px; font-size: 0.9em; color: #666;">
+                        Demo: username: <strong>demo</strong>, password: <strong>demo123</strong>
+                    </p>
+                </div>
+                
+                <!-- Register Form -->
+                <div class="auth-form">
+                    <h3>Register</h3>
+                    <div class="form-group">
+                        <label>Username</label>
+                        <input type="text" id="registerUsername" placeholder="johndoe">
+                    </div>
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input type="email" id="registerEmail" placeholder="john@example.com">
+                    </div>
+                    <div class="form-group">
+                        <label>Password</label>
+                        <input type="password" id="registerPassword" placeholder="Min 6 characters">
+                    </div>
+                    <button class="btn btn-primary" onclick="register()">Register</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- User Info (shown when logged in) -->
+        <div id="userSection" class="user-info hidden">
+            <div class="user-details">
+                <div class="user-avatar" id="userAvatar">U</div>
+                <div>
+                    <strong id="userName">User Name</strong><br>
+                    <span id="userEmail" style="color: #666; font-size: 0.9em;"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="7104021403311409101c011d145f121e1c">[email&#160;protected]</a></span>
+                </div>
+            </div>
+            <button class="btn btn-danger" onclick="logout()">Logout</button>
+        </div>
+        
+        <!-- Popular Products (always visible) -->
+        <div class="section">
+            <h2>🔥 Popular Products</h2>
+            <div id="popular" class="products-grid">
+                <div class="loading">Loading popular products...</div>
+            </div>
+        </div>
+        
+        <!-- Main Content (shown when logged in) -->
+        <div id="mainContent" class="hidden">
+            <div class="section">
+                <h2>🎯 Recommended For You</h2>
+                <div id="recommendations" class="products-grid">
+                    <div class="loading">Login to see your personalized recommendations...</div>
+                </div>
+            </div>
+            
+            <div class="section">
+                <h2>📦 Browse All Products</h2>
+                <div class="filter-section">
+                    <select id="categoryFilter" onchange="filterProducts()">
+                        <option value="">All Categories</option>
+                    </select>
+                    <button class="btn btn-secondary" onclick="loadProducts()">Refresh</button>
+                </div>
+                <div id="allProducts" class="products-grid">
+                    <div class="loading">Loading products...</div>
+                </div>
+                <div class="pagination" id="pagination"></div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        let authToken = localStorage.getItem('authToken');
+        let currentUser = null;
+        let currentPage = 1;
+        let allCategories = [];
+        
+        const getApiUrl = () => document.getElementById('apiUrl').value;
+        
+        function showStatus(message, isError = false) {
+            const statusDiv = document.getElementById('statusMessage');
+            statusDiv.innerHTML = `<div class="status ${isError ? 'error' : 'success'}">${message}</div>`;
+            setTimeout(() => statusDiv.innerHTML = '', 4000);
+        }
+        
+        function showAuth() {
+            document.getElementById('authSection').classList.remove('hidden');
+            document.getElementById('userSection').classList.add('hidden');
+            document.getElementById('mainContent').classList.add('hidden');
+        }
+        
+        function showMain() {
+            document.getElementById('authSection').classList.add('hidden');
+            document.getElementById('userSection').classList.remove('hidden');
+            document.getElementById('mainContent').classList.remove('hidden');
+        }
+        
+        async function register() {
+            const username = document.getElementById('registerUsername').value;
+            const email = document.getElementById('registerEmail').value;
+            const password = document.getElementById('registerPassword').value;
+            
+            if (!username || !email || !password) {
+                showStatus('Please fill all fields', true);
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${getApiUrl()}/api/register`, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({username, email, password})
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    authToken = data.token;
+                    localStorage.setItem('authToken', authToken);
+                    currentUser = data.user;
+                    showStatus('✅ Registration successful!');
+                    updateUserUI();
+                    showMain();
+                    loadUserData();
+                } else {
+                    showStatus(data.error || 'Registration failed', true);
+                }
+            } catch (error) {
+                showStatus('Network error. Check API URL.', true);
+            }
+        }
+        
+        async function login() {
+            const username = document.getElementById('loginUsername').value;
+            const password = document.getElementById('loginPassword').value;
+            
+            if (!username || !password) {
+                showStatus('Please enter username and password', true);
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${getApiUrl()}/api/login`, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({username, password})
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    authToken = data.token;
+                    localStorage.setItem('authToken', authToken);
+                    currentUser = data.user;
+                    showStatus('✅ Login successful!');
+                    updateUserUI();
+                    showMain();
+                    loadUserData();
+                } else {
+                    showStatus(data.error || 'Login failed', true);
+                }
+            } catch (error) {
+                showStatus('Network error. Check API URL.', true);
+            }
+        }
+        
+        async function logout() {
+            try {
+                await fetch(`${getApiUrl()}/api/logout`, {
+                    method: 'POST',
+                    headers: {'Authorization': `Bearer ${authToken}`}
+                });
+            } catch (error) {}
+            
+            authToken = null;
+            currentUser = null;
+            localStorage.removeItem('authToken');
+            showStatus('Logged out successfully');
+            showAuth();
+        }
+        
+        function updateUserUI() {
+            if (currentUser) {
+                document.getElementById('userName').textContent = currentUser.username;
+                document.getElementById('userEmail').textContent = currentUser.email;
+                document.getElementById('userAvatar').textContent = currentUser.username.charAt(0).toUpperCase();
+            }
+        }
+        
+        async function checkAuth() {
+            if (!authToken) {
+                showAuth();
+                return false;
+            }
+            
+            try {
+                const response = await fetch(`${getApiUrl()}/api/me`, {
+                    headers: {'Authorization': `Bearer ${authToken}`}
+                });
+                
+                if (response.ok) {
+                    currentUser = await response.json();
+                    updateUserUI();
+                    showMain();
+                    return true;
+                } else {
+                    authToken = null;
+                    localStorage.removeItem('authToken');
+                    showAuth();
+                    return false;
+                }
+            } catch (error) {
+                showAuth();
+                return false;
+            }
+        }
+        
+        function createProductCard(product, showSimilar = false) {
+            const scoreText = product.predicted_score !== undefined 
+                ? `<div class="product-score">Match Score: ${product.predicted_score.toFixed(2)}</div>`
+                : product.popularity_score !== undefined
+                ? `<div class="product-score">Popularity: ${product.popularity_score.toFixed(0)} interactions</div>`
+                : product.similarity_score !== undefined
+                ? `<div class="product-score">Similarity: ${product.similarity_score.toFixed(2)}</div>`
+                : '';
+            
+            const imageUrl = product.image_url || `https://picsum.photos/seed/product${product.item_id}/400/300`;
+            
+            return `
+                <div class="product-card">
+                    <img src="${imageUrl}" alt="${product.name}" class="product-image" loading="lazy">
+                    <div class="product-content">
+                        <span class="product-category">${product.category}</span>
+                        <h3>${product.name}</h3>
+                        <div class="product-price">$${product.price.toFixed(2)}</div>
+                        ${scoreText}
+                        <div class="product-actions">
+                            <button class="btn btn-primary" onclick="trackInteraction(${product.item_id}, 5)">
+                                Buy Now
+                            </button>
+                            ${showSimilar ? `
+                            <button class="btn btn-secondary" onclick="showSimilar(${product.item_id})">
+                                Similar
+                            </button>` : ''}
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+        
+        async function loadRecommendations() {
+            const container = document.getElementById('recommendations');
+            container.innerHTML = '<div class="loading">Loading your personalized recommendations...</div>';
+            
+            try {
+                const response = await fetch(`${getApiUrl()}/api/recommendations?n=6`, {
+                    headers: {'Authorization': `Bearer ${authToken}`}
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok && data.recommendations && data.recommendations.length > 0) {
+                    container.innerHTML = data.recommendations.map(p => createProductCard(p, true)).join('');
+                    showStatus(`✅ Loaded ${data.recommendations.length} personalized recommendations`);
+                } else {
+                    container.innerHTML = `
+                        <div class="empty-state">
+                            <p>Start shopping to get personalized recommendations!</p>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                container.innerHTML = '<div class="empty-state">❌ Failed to load recommendations</div>';
+            }
+        }
+        
+        async function loadPopular() {
+            const container = document.getElementById('popular');
+            container.innerHTML = '<div class="loading">Loading popular products...</div>';
+            
+            try {
+                const response = await fetch(`${getApiUrl()}/api/popular?n=6`);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}`);
+                }
+                
+                const data = await response.json();
+                
+                if (data.popular_products && data.popular_products.length > 0) {
+                    container.innerHTML = data.popular_products.map(p => createProductCard(p, true)).join('');
+                } else {
+                    container.innerHTML = '<div class="empty-state">No popular products found</div>';
+                }
+            } catch (error) {
+                console.error('Popular products error:', error);
+                container.innerHTML = `
+                    <div class="empty-state">
+                        ❌ Failed to load popular products<br>
+                        <small style="color: #999;">Check API URL: ${getApiUrl()}</small>
+                    </div>
+                `;
+            }
+        }
+        
+        async function loadProducts(page = 1) {
+            currentPage = page;
+            const category = document.getElementById('categoryFilter').value;
+            
+            try {
+                const url = `${getApiUrl()}/api/items?page=${page}&per_page=12${category ? '&category=' + category : ''}`;
+                const response = await fetch(url);
+                const data = await response.json();
+                
+                const container = document.getElementById('allProducts');
+                container.innerHTML = data.items.map(p => createProductCard(p, true)).join('');
+                
+                // Update categories
+                if (data.categories && allCategories.length === 0) {
+                    allCategories = data.categories;
+                    const select = document.getElementById('categoryFilter');
+                    data.categories.forEach(cat => {
+                        const option = document.createElement('option');
+                        option.value = cat;
+                        option.textContent = cat;
+                        select.appendChild(option);
+                    });
+                }
+                
+                // Update pagination
+                updatePagination(data.page, data.total_pages);
+            } catch (error) {
+                document.getElementById('allProducts').innerHTML = 
+                    '<div class="empty-state">❌ Failed to load products</div>';
+            }
+        }
+        
+        function updatePagination(current, total) {
+            const container = document.getElementById('pagination');
+            let html = '';
+            
+            if (current > 1) {
+                html += `<button class="btn btn-secondary" onclick="loadProducts(${current - 1})">Previous</button>`;
+            }
+            
+            html += `<span style="padding: 10px;">Page ${current} of ${total}</span>`;
+            
+            if (current < total) {
+                html += `<button class="btn btn-secondary" onclick="loadProducts(${current + 1})">Next</button>`;
+            }
+            
+            container.innerHTML = html;
+        }
+        
+        function filterProducts() {
+            loadProducts(1);
+        }
+        
+        async function showSimilar(itemId) {
+            try {
+                const response = await fetch(`${getApiUrl()}/api/similar/${itemId}?n=6`);
+                const data = await response.json();
+                
+                if (data.similar_items && data.similar_items.length > 0) {
+                    const container = document.getElementById('recommendations');
+                    container.innerHTML = '<h3 style="margin-bottom: 20px;">Similar Products:</h3>' + 
+                        data.similar_items.map(p => createProductCard(p, true)).join('');
+                    showStatus(`✅ Found ${data.similar_items.length} similar products`);
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                } else {
+                    showStatus('No similar products found', true);
+                }
+            } catch (error) {
+                showStatus('Failed to load similar products', true);
+            }
+        }
+        
+        async function trackInteraction(itemId, rating) {
+            try {
+                const response = await fetch(`${getApiUrl()}/api/track`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${authToken}`
+                    },
+                    body: JSON.stringify({item_id: itemId, rating: rating})
+                });
+                
+                if (response.ok) {
+                    showStatus('✅ Purchase tracked! Recommendations will improve.');
+                    setTimeout(() => loadRecommendations(), 1000);
+                } else {
+                    showStatus('Failed to track purchase', true);
+                }
+            } catch (error) {
+                showStatus('Network error', true);
+            }
+        }
+        
+        async function loadUserData() {
+            loadRecommendations();
+            loadPopular();
+            loadProducts();
+        }
+        
+        // Initialize on load
+        window.onload = async () => {
+            loadPopular();
+            
+            const isAuthenticated = await checkAuth();
+            if (isAuthenticated) {
+                loadUserData();
+            }
+        };
+    </script>
+</body>
+</html>
